@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AmplicodePersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="YandexMarketDemo.order-service.main" name="Default">
+        <packages>
+          <package value="com.example" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="YandexMarketDemo.payment-service.main" name="Default">
+        <packages>
+          <package value="com.example" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="YandexMarketDemo.main" name="Default">
+        <packages>
+          <package value="com.example.YandexMarketDemo" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>
