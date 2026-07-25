@@ -4,7 +4,6 @@ import com.example.domain.db.OrderEntityMapper;
 import com.example.domain.OrderProcessor;
 import com.example.http.order.CreateOrderRequestDto;
 import com.example.http.order.OrderDto;
-import com.example.http.payment.CreatePaymentRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
