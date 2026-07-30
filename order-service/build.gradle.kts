@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.springframework.boot") version "4.1.0"
+    id("org.springframework.boot") version "3.5.3"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -9,7 +9,7 @@ version = "0.0.1-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":common-libs"))
     implementation(project(":payment-service"))
     implementation("org.springframework.boot:spring-boot-starter-web")
-   // implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.kafka:spring-kafka")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")

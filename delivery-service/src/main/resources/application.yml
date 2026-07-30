@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: delivery-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: "12345"
+    username: Viar
+    url: jdbc:postgresql://localhost:5432/YandexMarketDB
+  jpa:
+    hibernate:
+      ddl-auto: update
+  kafka:
+    consumer:
+      group-id: delivery-service-group
+    bootstrap-servers: localhost:9092
+server:
+  port: 8083
+
+order-paid-topic: orders.events
+delivery-assigned-topic: delivery.events

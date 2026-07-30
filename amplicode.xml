@@ -17,6 +17,11 @@
           <package value="com.example.YandexMarketDemo" />
         </packages>
       </persistence-unit>
+      <persistence-unit moduleName="YandexMarketDemo.delivery-service.main" name="Default">
+        <packages>
+          <package value="com.example" />
+        </packages>
+      </persistence-unit>
     </persistence-units>
   </component>
 </project>
