@@ -19,7 +19,8 @@ import java.math.BigDecimal;
 public class ProductEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "products_seq_gen", sequenceName = "products_seq", allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_seq_gen")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

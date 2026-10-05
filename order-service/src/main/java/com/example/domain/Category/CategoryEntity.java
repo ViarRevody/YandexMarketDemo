@@ -15,7 +15,8 @@ import lombok.Setter;
 public class CategoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "categories_seq_gen", sequenceName = "categories_seq", allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_seq_gen")
     private Long id;
 
     @Column(name = "name", nullable = false, unique = true)

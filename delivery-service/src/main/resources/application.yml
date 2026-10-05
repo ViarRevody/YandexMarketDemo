@@ -3,12 +3,12 @@ spring:
     name: delivery-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    password: "12345"
-    username: Viar
-    url: jdbc:postgresql://localhost:5432/YandexMarketDB
+    password: ${DB_PASSWORD:12345}
+    username: ${DB_USER:Viar}
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/YandexMarketDB}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   kafka:
     consumer:
       group-id: delivery-service-group

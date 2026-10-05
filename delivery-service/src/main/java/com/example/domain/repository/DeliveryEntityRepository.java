@@ -1,5 +1,6 @@
-package com.example.domain;
+package com.example.domain.repository;
 
+import com.example.domain.DeliveryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

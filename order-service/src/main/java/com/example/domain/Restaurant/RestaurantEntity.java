@@ -18,7 +18,8 @@ import java.util.List;
 public class RestaurantEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "restaurants_seq_gen", sequenceName = "restaurants_seq", allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restaurants_seq_gen")
     private Long id;
 
     @Column(name = "name", nullable = false)

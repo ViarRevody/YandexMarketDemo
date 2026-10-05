@@ -16,7 +16,8 @@ import lombok.Setter;
 public class AddressEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "addresses_seq_gen", sequenceName = "addresses_seq", allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "addresses_seq_gen")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
