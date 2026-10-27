@@ -10,7 +10,6 @@ import com.example.external.PaymentHttpClient;
 import com.example.http.order.CreateOrderRequestDto;
 import com.example.http.order.OrderStatus;
 import com.example.http.payment.CreatePaymentRequestDto;
-import com.example.http.payment.PaymentMethod;
 import com.example.http.payment.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,13 +47,18 @@ public class OrderProcessor {
 
     private void calculatePricingForOrder(OrderEntity entity) {
         BigDecimal totalPrice = BigDecimal.ZERO;
-        for (OrderItemEntity item : entity.getItems()) {
-            var randomPrice = ThreadLocalRandom.current().nextDouble(100, 5000);
-            item.setPriceAtPurchase(BigDecimal.valueOf(randomPrice));
+        if (entity.getItems() != null) {
+            for (OrderItemEntity item : entity.getItems()) {
+                if (item.getPriceAtPurchase() == null) {
+                    var randomPrice = ThreadLocalRandom.current().nextDouble(100, 5000);
+                    item.setPriceAtPurchase(BigDecimal.valueOf(randomPrice));
+                }
 
-            totalPrice = item.getPriceAtPurchase()
-                    .multiply(BigDecimal.valueOf(item.getQuantity()))
-                    .add(totalPrice);
+                int quantity = item.getQuantity() != null ? item.getQuantity() : 1;
+                totalPrice = item.getPriceAtPurchase()
+                        .multiply(BigDecimal.valueOf(quantity))
+                        .add(totalPrice);
+            }
         }
         entity.setTotalAmount(totalPrice);
     }
@@ -65,7 +69,7 @@ public class OrderProcessor {
     ) {
         var entity = getOrderOrThrow(id);
         if (!entity.getOrderStatus().equals(OrderStatus.PENDING_PAYMENT)) {
-            throw new RuntimeException("Order must be in status PENDING_PAYMENT");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order must be in status PENDING_PAYMENT");
         }
         var response = paymentHttpClient.createPayment(CreatePaymentRequestDto.builder()
                 .orderId(id)
@@ -81,4 +85,3 @@ public class OrderProcessor {
         return orderJpaRepository.save(entity);
     }
 }
-
