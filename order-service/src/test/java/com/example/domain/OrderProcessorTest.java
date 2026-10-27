@@ -5,7 +5,9 @@ import com.example.domain.db.OrderEntity;
 import com.example.domain.db.OrderEntityMapper;
 import com.example.domain.db.OrderItemEntity;
 import com.example.domain.db.OrderJpaRepository;
+import com.example.external.DeliveryHttpClient;
 import com.example.external.PaymentHttpClient;
+import com.example.http.delivery.CreateDeliveryResponseDto;
 import com.example.http.order.CreateOrderRequestDto;
 import com.example.http.order.OrderItemRequestDto;
 import com.example.http.order.OrderStatus;
@@ -39,6 +41,9 @@ class OrderProcessorTest {
 
     @Mock
     private PaymentHttpClient paymentHttpClient;
+
+    @Mock
+    private DeliveryHttpClient deliveryHttpClient;
 
     @InjectMocks
     private OrderProcessor orderProcessor;
@@ -78,7 +83,7 @@ class OrderProcessorTest {
     }
 
     @Test
-    void testProcessPaymentSuccess() {
+    void testProcessPaymentSuccessAndDeliveryAssigned() {
         orderEntity.setOrderStatus(OrderStatus.PENDING_PAYMENT);
         orderEntity.setTotalAmount(BigDecimal.valueOf(200));
 
@@ -92,11 +97,16 @@ class OrderProcessorTest {
                         BigDecimal.valueOf(200)
                 )
         );
+        when(deliveryHttpClient.createDelivery(any())).thenReturn(
+                new CreateDeliveryResponseDto(1L, "Иван Петров", 25)
+        );
         when(orderJpaRepository.save(any(OrderEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderEntity updated = orderProcessor.processPayment(1L, new OrderPaymentRequest(PaymentMethod.CARD));
 
-        assertEquals(OrderStatus.PAID, updated.getOrderStatus());
+        assertEquals(OrderStatus.PENDING_DELIVERY, updated.getOrderStatus());
+        assertEquals("Иван Петров", updated.getCourierName());
+        assertEquals(25, updated.getEtaMinutes());
     }
 
     @Test
@@ -119,6 +129,7 @@ class OrderProcessorTest {
         OrderEntity updated = orderProcessor.processPayment(1L, new OrderPaymentRequest(PaymentMethod.QR));
 
         assertEquals(OrderStatus.PAYMENT_FAILED, updated.getOrderStatus());
+        verify(deliveryHttpClient, never()).createDelivery(any());
     }
 
     @Test
