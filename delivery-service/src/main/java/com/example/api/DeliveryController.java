@@ -1,6 +1,6 @@
 package com.example.api;
 
-import com.example.domain.DeliveryProcessor;
+import com.example.domain.DeliveryService;
 import com.example.http.delivery.CreateDeliveryRequestDto;
 import com.example.http.delivery.CreateDeliveryResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DeliveryController {
 
-    private final DeliveryProcessor deliveryProcessor;
+    private final DeliveryService deliveryService;
 
     @PostMapping
     public CreateDeliveryResponseDto createDelivery(@RequestBody CreateDeliveryRequestDto request) {
-        log.info("Creating delivery: request={}", request);
-        return deliveryProcessor.createDelivery(request);
+        log.info("Creating delivery in DB: request={}", request);
+        var delivery = deliveryService.assignDelivery(request.orderId());
+        return new CreateDeliveryResponseDto(
+                delivery.getOrderId(),
+                delivery.getCourier().getName(),
+                delivery.getEtaMinutes()
+        );
     }
 }

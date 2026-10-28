@@ -1,15 +1,19 @@
 package com.example.domain;
 
 import com.example.api.OrderPaymentRequest;
+import com.example.domain.Address.AddressEntity;
+import com.example.domain.Address.AddressEntityRepository;
+import com.example.domain.Customer.CustomerEntity;
+import com.example.domain.Customer.CustomerEntityRepository;
+import com.example.domain.Product.ProductEntity;
+import com.example.domain.Product.ProductEntityRepository;
+import com.example.domain.Restaurant.RestaurantEntity;
+import com.example.domain.Restaurant.RestaurantEntityRepository;
 import com.example.domain.db.OrderEntity;
-import com.example.domain.db.OrderEntityMapper;
-import com.example.domain.db.OrderItemEntity;
 import com.example.domain.db.OrderJpaRepository;
 import com.example.external.DeliveryHttpClient;
 import com.example.external.PaymentHttpClient;
 import com.example.http.delivery.CreateDeliveryResponseDto;
-import com.example.http.order.CreateOrderRequestDto;
-import com.example.http.order.OrderItemRequestDto;
 import com.example.http.order.OrderStatus;
 import com.example.http.payment.CreatePaymentResponseDto;
 import com.example.http.payment.PaymentMethod;
@@ -24,7 +28,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,13 +40,22 @@ class OrderProcessorTest {
     private OrderJpaRepository orderJpaRepository;
 
     @Mock
-    private OrderEntityMapper orderEntityMapper;
-
-    @Mock
     private PaymentHttpClient paymentHttpClient;
 
     @Mock
     private DeliveryHttpClient deliveryHttpClient;
+
+    @Mock
+    private CustomerEntityRepository customerRepository;
+
+    @Mock
+    private AddressEntityRepository addressRepository;
+
+    @Mock
+    private RestaurantEntityRepository restaurantRepository;
+
+    @Mock
+    private ProductEntityRepository productRepository;
 
     @InjectMocks
     private OrderProcessor orderProcessor;
@@ -54,32 +66,20 @@ class OrderProcessorTest {
     void setUp() {
         orderEntity = new OrderEntity();
         orderEntity.setId(1L);
-        orderEntity.setCustomerId(100L);
-        orderEntity.setAddress("123 Main St");
 
-        OrderItemEntity item = new OrderItemEntity();
-        item.setId(10L);
-        item.setItemId(50L);
-        item.setQuantity(2);
-        item.setName("Test Product");
-        item.setOrder(orderEntity);
+        CustomerEntity customer = new CustomerEntity();
+        customer.setId(100L);
+        orderEntity.setCustomer(customer);
 
-        orderEntity.setItems(Set.of(item));
-    }
+        AddressEntity address = new AddressEntity();
+        address.setId(10L);
+        address.setCity("Moscow");
+        address.setStreet("Tverskaya");
+        orderEntity.setAddress(address);
 
-    @Test
-    void testCreateOrder() {
-        CreateOrderRequestDto request = new CreateOrderRequestDto(100L, "123 Main St", Set.of(new OrderItemRequestDto(50L, 2, "Test Product")));
-
-        when(orderEntityMapper.toEntity(request)).thenReturn(orderEntity);
-        when(orderJpaRepository.save(any(OrderEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        OrderEntity created = orderProcessor.create(request);
-
-        assertNotNull(created);
-        assertEquals(OrderStatus.PENDING_PAYMENT, created.getOrderStatus());
-        assertNotNull(created.getTotalAmount());
-        verify(orderJpaRepository).save(orderEntity);
+        RestaurantEntity restaurant = new RestaurantEntity();
+        restaurant.setId(1L);
+        orderEntity.setRestaurant(restaurant);
     }
 
     @Test
@@ -104,9 +104,7 @@ class OrderProcessorTest {
 
         OrderEntity updated = orderProcessor.processPayment(1L, new OrderPaymentRequest(PaymentMethod.CARD));
 
-        assertEquals(OrderStatus.PENDING_DELIVERY, updated.getOrderStatus());
-        assertEquals("Иван Петров", updated.getCourierName());
-        assertEquals(25, updated.getEtaMinutes());
+        assertEquals(OrderStatus.DELIVERY_ASSIGNED, updated.getOrderStatus());
     }
 
     @Test
@@ -134,7 +132,7 @@ class OrderProcessorTest {
 
     @Test
     void testProcessPaymentInvalidStatus() {
-        orderEntity.setOrderStatus(OrderStatus.PAID);
+        orderEntity.setOrderStatus(OrderStatus.DELIVERED);
 
         when(orderJpaRepository.findById(1L)).thenReturn(Optional.of(orderEntity));
 

@@ -13,18 +13,13 @@ public class PaymentHttpClientConfig {
     @Value("${payment-service.base-url}")
     private String paymentServiceBaseUrl;
 
-    /*@Bean
+    @Bean
     RestClient paymentRestClient(RestClient.Builder builder){
         return builder
                 .baseUrl(paymentServiceBaseUrl)
                 .build();
-    }*/
-    @Bean
-    RestClient paymentRestClient() {
-        return RestClient.builder()
-                .baseUrl(paymentServiceBaseUrl)
-                .build();
     }
+
     @Bean
     PaymentHttpClient paymentHttpClient(RestClient restClient){
         return HttpServiceProxyFactory.builder()

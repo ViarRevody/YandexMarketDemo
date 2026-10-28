@@ -33,6 +33,13 @@ public class OrderController {
         var entity=orderProcessor.processPayment(id,request);
         return orderEntityMapper.toOrderDto(entity);
     }
+    @PostMapping("/{id}/deliver")
+    public OrderDto markDelivered(
+            @PathVariable Long id) {
+        log.info("Marking order as delivered: id={}", id);
+        var entity = orderProcessor.markDelivered(id);
+        return orderEntityMapper.toOrderDto(entity);
+    }
 
     @GetMapping("/{id}")
     public OrderDto getOne(

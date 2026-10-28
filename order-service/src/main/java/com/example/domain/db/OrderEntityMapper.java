@@ -1,9 +1,8 @@
 package com.example.domain.db;
 
-import com.example.http.order.CreateOrderRequestDto;
+
 import com.example.http.order.OrderDto;
 import com.example.http.order.OrderItemDto;
-import com.example.http.order.OrderItemRequestDto;
 import org.mapstruct.*;
 
 @Mapper(
@@ -11,18 +10,25 @@ import org.mapstruct.*;
         componentModel = MappingConstants.ComponentModel.SPRING)
 public interface OrderEntityMapper {
 
-    OrderEntity toEntity(CreateOrderRequestDto requestDto);
-
-    OrderItemEntity toEntity(OrderItemRequestDto requestDto);
-
-    OrderItemDto toOrderItemDto(OrderItemEntity orderItemEntity);
-
+    @Mapping(target = "customerId", source = "customer.id")
     OrderDto toOrderDto(OrderEntity orderEntity);
 
-    @AfterMapping
-    default void linkItems(@MappingTarget OrderEntity orderEntity) {
-        if (orderEntity.getItems() != null) {
-            orderEntity.getItems().forEach(item -> item.setOrder(orderEntity));
+    @Mapping(target = "itemId", source = "product.id")
+    OrderItemDto toOrderItemDto(OrderItemEntity orderItemEntity);
+
+    default String map(com.example.domain.Address.AddressEntity address) {
+        if (address == null) {
+            return null;
         }
+        StringBuilder sb = new StringBuilder();
+        sb.append(address.getCity())
+                .append(", ")
+                .append(address.getStreet())
+                .append(" ")
+                .append(address.getHouse());
+        if (address.getApartment() != null && !address.getApartment().isBlank()) {
+            sb.append(", кв. ").append(address.getApartment());
+        }
+        return sb.toString();
     }
 }

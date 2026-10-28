@@ -10,7 +10,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration
 public class DeliveryHttpClientConfig {
 
-    @Value("${delivery-service.base-url:http://localhost:8082}")
+    @Value("${delivery-service.base-url:http://localhost:8083}")
     private String deliveryServiceBaseUrl;
 
     @Bean

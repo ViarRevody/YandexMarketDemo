@@ -22,11 +22,10 @@ dependencies {
     implementation(project(":common-libs"))
     implementation(project(":payment-service"))
     implementation("org.springframework.boot:spring-boot-starter-web")
-   // implementation("org.springframework.kafka:spring-kafka")
+    //implementation("org.springframework.kafka:spring-kafka")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("com.h2database:h2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 

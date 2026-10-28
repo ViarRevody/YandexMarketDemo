@@ -19,7 +19,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class PaymentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "payments_seq_gen", sequenceName = "payments_seq", allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payments_seq_gen")
     @Column(name="id", nullable = false)
     private Long id;
 
@@ -38,4 +39,3 @@ public class PaymentEntity {
     private PaymentMethod paymentMethod;
 
 }
-
